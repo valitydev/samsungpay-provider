@@ -1,0 +1,20 @@
+{
+  "callback": "0",
+  "paymentDetails": {
+    "service": {
+      "id": "bb12a068ebca4916a7c3c1"
+    },
+    "orderNumber": "2346",
+    "protocol": {
+      "type": "3DS",
+      "version": "80"
+    },
+    "amount": {
+      "currency": "RUB",
+      "total": 98.76
+    },
+    "merchant": {
+      "name": "rbk_merch"
+    }
+  }
+}
