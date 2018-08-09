@@ -40,6 +40,7 @@ public class SPKeyStore {
     public static PKCS8EncodedKeySpec getPrivateKey(String pemKey) throws GeneralSecurityException {
         pemKey = pemKey.replace("-----BEGIN PRIVATE KEY-----\n", "");
         pemKey = pemKey.replace("-----END PRIVATE KEY-----", "");
+        pemKey = pemKey.replace("\n", "");
         byte[] encoded = Base64.getDecoder().decode(pemKey);
         PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(encoded);
         return keySpec;
