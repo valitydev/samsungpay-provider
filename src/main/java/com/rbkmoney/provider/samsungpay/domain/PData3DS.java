@@ -1,12 +1,11 @@
 package com.rbkmoney.provider.samsungpay.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.rbkmoney.provider.samsungpay.service.ExpDateDeserialiser;
 
-import java.time.LocalDate;
+import java.time.YearMonth;
 
 /**
  * Created by vpankrashkin on 05.07.18.
@@ -17,7 +16,7 @@ public class PData3DS {
     public String created;
     public String eci;
     public String dpan;
-    public LocalDate expirationDate;
+    public YearMonth expirationDate;
     public String cryptogram;
     public String cardholder;
 
@@ -29,7 +28,7 @@ public class PData3DS {
             @JsonProperty(value = "eci_indicator") String eci,
             @JsonProperty(value = "tokenPAN", required = true) String dpan,
             @JsonDeserialize(using = ExpDateDeserialiser.class)
-            @JsonProperty(value = "tokenPanExpiration", required = true) LocalDate expirationDate,
+            @JsonProperty(value = "tokenPanExpiration", required = true) YearMonth expirationDate,
             @JsonProperty(value = "cryptogram", required = true) String cryptogram,
             @JsonProperty(value = "cardholder_name") String cardholder) {
         this.amount = amount;

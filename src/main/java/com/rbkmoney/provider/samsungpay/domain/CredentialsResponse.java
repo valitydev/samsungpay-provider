@@ -1,11 +1,13 @@
 package com.rbkmoney.provider.samsungpay.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Created by vpankrashkin on 05.07.18.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CredentialsResponse {
     public String deviceId;
     public AuthMethod authMethod;
@@ -21,7 +23,7 @@ public class CredentialsResponse {
             @JsonProperty(value = "card_last4digits") String last4digits,
             @JsonProperty(value = "card_brand") String cardBrand,
             @JsonProperty(value = "3DS") Data3DS data3DS,
-            @JsonProperty(value = "certificates", required = true) Certificate[] certificates) {
+            @JsonProperty(value = "certificates") Certificate[] certificates) {
         this.deviceId = deviceId;
         this.authMethod = authMethod;
         this.last4digits = last4digits;
