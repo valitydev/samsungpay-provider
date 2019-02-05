@@ -11,12 +11,10 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.util.HashSet;
 
-/**
- * Created by vpankrashkin on 04.04.18.
- */
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig {
+
     @Bean
     public Docket api() {
         Docket docket = new Docket(DocumentationType.SWAGGER_2)

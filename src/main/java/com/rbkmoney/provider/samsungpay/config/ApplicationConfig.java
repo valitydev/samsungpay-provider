@@ -22,23 +22,29 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-/**
- * Created by vpankrashkin on 04.07.18.
- */
 @Configuration
 public class ApplicationConfig {
+
+    public static final String HEALTH = "/actuator/health";
+
+    @Value("${server.rest.port}")
+    private int restPort;
+
+    @Value("/${server.rest.endpoint}/")
+    private String restEndpoint;
+
     @Bean
     public SPayClient transactionClient(
-            @Value("${samsung.trans_url_template}") String transactionURLTemplate,
-            @Value("${samsung.cred_url_template}") String credentialsURLTemplate,
-            @Value("${samsung.conn_timeout_ms}") int connTimeoutMs,
-            @Value("${samsung.read_timeout_ms}") int readTimeoutMs,
-            @Value("${samsung.write_timeout_ms}") int writeTimeoutMs) {
+            @Value("${samsung.url.template.transactions}") String transactionURLTemplate,
+            @Value("${samsung.url.template.credentials}") String credentialsURLTemplate,
+            @Value("${samsung.timeout.connect}") int connTimeoutMs,
+            @Value("${samsung.timeout.read}") int readTimeoutMs,
+            @Value("${samsung.timeout.write}") int writeTimeoutMs) {
         return new SPayClient(transactionURLTemplate, credentialsURLTemplate, connTimeoutMs, readTimeoutMs, writeTimeoutMs);
     }
 
     @Bean
-    public SPKeyStore keyStore(@Value("${keys_path}") String keysPath) {
+    public SPKeyStore keyStore(@Value("${keys.path}") String keysPath) {
         return new SPKeyStore(keysPath);
     }
 
@@ -54,26 +60,26 @@ public class ApplicationConfig {
 
 
     @Bean
-    public ServletWebServerFactory servletContainer(@Value("${server.rest_port}") int httpPort) {
+    public ServletWebServerFactory servletContainer() {
         TomcatServletWebServerFactory tomcat = new TomcatServletWebServerFactory();
         Connector connector = new Connector();
-        connector.setPort(httpPort);
+        connector.setPort(restPort);
         tomcat.addAdditionalTomcatConnectors(connector);
         return tomcat;
     }
 
     @Bean
-    public FilterRegistrationBean externalPortRestrictingFilter(@Value("${server.rest_port}") int restPort, @Value("/${server.rest_path_prefix}/") String httpPathPrefix) {
+    public FilterRegistrationBean externalPortRestrictingFilter() {
         Filter filter = new OncePerRequestFilter() {
 
             @Override
             protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                             FilterChain filterChain) throws ServletException, IOException {
-                if (request.getLocalPort() == restPort) {
-                    if (!(request.getServletPath().startsWith(httpPathPrefix) || request.getServletPath().startsWith("/actuator/health"))) {
-                        response.sendError(404, "Unknown address");
-                        return;
-                    }
+                String servletPath = request.getServletPath();
+                if ((request.getLocalPort() == restPort)
+                        && !(servletPath.startsWith(restEndpoint) || servletPath.startsWith(HEALTH))) {
+                    response.sendError(404, "Unknown address");
+                    return;
                 }
                 filterChain.doFilter(request, response);
             }
@@ -88,24 +94,23 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public FilterRegistrationBean woodyFilter(@Value("${server.rest_port}") int restPort, @Value("/${server.rest_path_prefix}/") String httpPathPrefix) {
+    public FilterRegistrationBean woodyFilter() {
         WFlow wFlow = new WFlow();
         Filter filter = new OncePerRequestFilter() {
 
             @Override
             protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                             FilterChain filterChain) throws ServletException, IOException {
-                if (request.getLocalPort() == restPort) {
-                    if (request.getServletPath().startsWith(httpPathPrefix)) {
-                        wFlow.createServiceFork(() -> {
-                            try {
-                                filterChain.doFilter(request, response);
-                            } catch (IOException | ServletException e) {
-                                sneakyThrow(e);
-                            }
-                        }).run();
-                        return;
-                    }
+                if ((request.getLocalPort() == restPort)
+                        && request.getServletPath().startsWith(restEndpoint)) {
+                    wFlow.createServiceFork(() -> {
+                        try {
+                            filterChain.doFilter(request, response);
+                        } catch (IOException | ServletException e) {
+                            sneakyThrow(e);
+                        }
+                    }).run();
+                    return;
                 }
                 filterChain.doFilter(request, response);
             }
@@ -119,7 +124,7 @@ public class ApplicationConfig {
         filterRegistrationBean.setFilter(filter);
         filterRegistrationBean.setOrder(-50);
         filterRegistrationBean.setName("woodyFilter");
-        filterRegistrationBean.addUrlPatterns(httpPathPrefix+"*");
+        filterRegistrationBean.addUrlPatterns(restEndpoint + "*");
         return filterRegistrationBean;
     }
 }

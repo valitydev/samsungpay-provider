@@ -23,7 +23,7 @@ import java.util.Map;
  */
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/${server.rest.endpoint}")
 @Api(description = "Transaction creation API")
 public class DumbRequestTransactionController {
     private final Logger log = LoggerFactory.getLogger(this.getClass());

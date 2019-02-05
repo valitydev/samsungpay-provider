@@ -5,7 +5,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.*;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.HttpClientErrorException;
@@ -16,10 +15,6 @@ import java.nio.charset.StandardCharsets;
 
 import static org.junit.Assert.assertEquals;
 
-
-/**
- * Created by vpankrashkin on 12.04.18.
- */
 @RunWith(SpringRunner.class)
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
@@ -28,14 +23,13 @@ import static org.junit.Assert.assertEquals;
 
 public class TransactionRunnerTest {
 
-    @Value("http://127.0.0.1:${server.rest_port}/${server.rest_path_prefix}/transaction")
+    @Value("http://localhost:${server.rest.port}/${server.rest.endpoint}/transaction")
     private String transactionUrl;
 
     @Value("classpath:transaction_req.json")
     private org.springframework.core.io.Resource resource;
 
-
-    RestTemplate restTemplate = new RestTemplate();
+    private RestTemplate restTemplate = new RestTemplate();
 
     @Test
     public void testRequestTransaction() throws IOException {

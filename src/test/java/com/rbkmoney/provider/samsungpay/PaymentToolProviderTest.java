@@ -27,7 +27,7 @@ import static org.mockito.Mockito.when;
 @RunWith(SpringRunner.class)
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        properties = {"server.rest_port=65432"}
+        properties = {"server.rest.port=65432"}
 )
 public class PaymentToolProviderTest {
 
