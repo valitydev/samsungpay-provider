@@ -5,8 +5,7 @@ import com.rbkmoney.provider.samsungpay.domain.CredentialsResponse;
 import com.rbkmoney.provider.samsungpay.domain.PData3DS;
 import com.rbkmoney.provider.samsungpay.domain.ResultStatus;
 import com.rbkmoney.provider.samsungpay.store.SPKeyStore;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.AbstractMap;
@@ -15,8 +14,8 @@ import java.util.Map;
 /**
  * Created by vpankrashkin on 03.07.18.
  */
+@Slf4j
 public class SPayService {
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     private final SPayClient sPayClient;
     private final SPKeyStore keyStore;
@@ -46,7 +45,7 @@ public class SPayService {
         String respBody = sPayClient.requestCredentials(serviceId, refId);
         ResultStatus status = mapper.readValue(respBody, ResultStatus.class);
         if (!"0".equals(status.code)) {
-            log.error("Unsuccessful SP response code:" + status, respBody);
+            log.error("Unsuccessful SP response code: {}. Body: {}", status, respBody);
             throw new SPException("Unsuccessful SP response code", respBody);
         }
         CredentialsResponse credResp = mapper.readValue(respBody, CredentialsResponse.class);

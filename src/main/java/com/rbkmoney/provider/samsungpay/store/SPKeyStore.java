@@ -4,7 +4,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
-import java.security.KeyFactory;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Base64;
 
@@ -42,8 +41,7 @@ public class SPKeyStore {
         pemKey = pemKey.replace("-----END PRIVATE KEY-----", "");
         pemKey = pemKey.replace("\n", "");
         byte[] encoded = Base64.getDecoder().decode(pemKey);
-        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(encoded);
-        return keySpec;
+        return new PKCS8EncodedKeySpec(encoded);
     }
 
     private String buildCertFileName(String serviceId, String suffix) {

@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -30,7 +30,7 @@ public class ProviderHandler implements PaymentToolProviderSrv.Iface {
     public UnwrappedPaymentTool unwrap(WrappedPaymentTool paymentTool) throws InvalidRequest, TException {
         log.info("New unwrap request: {}", paymentTool);
         if (!paymentTool.getRequest().isSetSamsung()) {
-            throw new InvalidRequest(Arrays.asList("Received request type is not SamsungPay"));
+            throw new InvalidRequest(List.of("Received request type is not SamsungPay"));
         }
         String refId = paymentTool.getRequest().getSamsung().getReferenceId();
         String srvId = paymentTool.getRequest().getSamsung().getServiceId();
@@ -73,10 +73,10 @@ public class ProviderHandler implements PaymentToolProviderSrv.Iface {
             return result;
         } catch (IOException e) {
             //log.error("Failed to read json data: {}", filterPan(e.getMessage()));
-            throw new InvalidRequest(Arrays.asList("Failed to read json data"));
+            throw new InvalidRequest(List.of("Failed to read json data"));
         } catch (Exception e) {
             log.error("Failed to get credentials", e);
-            throw new InvalidRequest(Arrays.asList(e.getMessage()));
+            throw new InvalidRequest(List.of(e.getMessage()));
         }
     }
 }

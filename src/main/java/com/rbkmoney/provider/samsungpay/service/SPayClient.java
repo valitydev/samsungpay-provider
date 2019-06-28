@@ -4,22 +4,22 @@ import com.rbkmoney.woody.api.flow.error.WErrorDefinition;
 import com.rbkmoney.woody.api.flow.error.WRuntimeException;
 import com.rbkmoney.woody.api.trace.context.TraceContext;
 import com.rbkmoney.woody.thrift.impl.http.error.THTransportErrorMapper;
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.util.UriTemplate;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
  * Created by vpankrashkin on 26.06.18.
  */
+@Slf4j
 public class SPayClient {
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     private final int connTimeoutMs;
     private final int readTimeoutMs;
@@ -52,11 +52,7 @@ public class SPayClient {
             return result;
         } catch (IOException e) {
             WErrorDefinition errDef = errorMapper.mapToDef(e, TraceContext.getCurrentTraceData().getActiveSpan());
-            if (errDef != null) {
-                throw new WRuntimeException(e, errDef);
-            } else {
-                throw new WRuntimeException(e, new WErrorDefinition());
-            }
+            throw new WRuntimeException(e, Objects.requireNonNullElseGet(errDef, WErrorDefinition::new));
         }
     }
 
@@ -65,10 +61,8 @@ public class SPayClient {
         try {
             OkHttpClient client = prepareClient();
             log.debug("Http client prepared");
-            Request request = prepareGetRequest(credentialsTemplate.expand(new HashMap() {{
-                put("id", refId);
-                put("serviceId", serviceId);
-            }}).toURL());
+            Map<String, String> uriVar = Map.of("id", refId, "serviceId", serviceId);
+            Request request = prepareGetRequest(credentialsTemplate.expand(uriVar).toURL());
             Response response = client.newCall(request).execute();
             if (!response.isSuccessful()) {
                 throw new SPException("Unsuccessful call result", response.body().string());
@@ -78,11 +72,7 @@ public class SPayClient {
             return result;
         } catch (IOException e) {
             WErrorDefinition errDef = errorMapper.mapToDef(e, TraceContext.getCurrentTraceData().getActiveSpan());
-            if (errDef != null) {
-                throw new WRuntimeException(e, errDef);
-            } else {
-                throw new WRuntimeException(e, new WErrorDefinition());
-            }
+            throw new WRuntimeException(e, Objects.requireNonNullElseGet(errDef, WErrorDefinition::new));
         }
     }
 

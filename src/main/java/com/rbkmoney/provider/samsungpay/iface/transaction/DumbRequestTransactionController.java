@@ -4,13 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rbkmoney.provider.samsungpay.service.SPayService;
 import com.rbkmoney.woody.api.flow.error.WErrorType;
 import com.rbkmoney.woody.api.flow.error.WRuntimeException;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,17 +23,15 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/${server.rest.endpoint}")
-@Api(description = "Transaction creation API")
+@RequiredArgsConstructor
 public class DumbRequestTransactionController {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-    @Autowired
-    private SPayService service;
+    private final SPayService service;
 
-    private ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = new ObjectMapper();
 
-
-    @ApiOperation(value = "Request SamsungPay transaction", notes = "")
+    @ApiOperation(value = "Request SamsungPay transaction")
     @PostMapping(value = "/transaction", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, headers = "Content-Type=application/json")
     @ApiResponses(value = {
             @ApiResponse(code= 200, message = "Samsung Pay session object"),
@@ -42,7 +39,6 @@ public class DumbRequestTransactionController {
             @ApiResponse(code = 503, message = "Samsung Pay service unavailable")
     })
     @CrossOrigin
-
     public ResponseEntity<String> getTransaction(@RequestBody Map<String, Object> request) {
         log.info("New Transaction request: {}", request);
 
