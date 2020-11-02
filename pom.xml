@@ -8,7 +8,7 @@
     <parent>
         <groupId>com.rbkmoney</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.1.1.RELEASE</version>
+        <version>2.3.4.RELEASE</version>
     </parent>
 
     <groupId>com.rbkmoney.provider</groupId>
@@ -20,19 +20,16 @@
         <server.port>8022</server.port>
         <server.rest.port>8080</server.rest.port>
         <exposed.ports>${server.port} ${server.rest.port}</exposed.ports>
-        <dockerfile.base.service.tag>c0d0900ec19c907d866f8360031a836049985110</dockerfile.base.service.tag>
+        <dockerfile.base.service.tag>57e26d8ee999d7b0b50248c22afc63e6f926d276</dockerfile.base.service.tag>
         <dockerfile.registry>${env.REGISTRY}</dockerfile.registry>
-        <damsel.version>1.232-5e54b26</damsel.version>
-        <shared.resources.version>0.3.6</shared.resources.version>
-        <woody-thrift.version>1.1.15</woody-thrift.version>
-        <nop-rolling.version>1.0.3</nop-rolling.version>
-        <geck.common.version>0.6.9</geck.common.version>
-        <lombok.version>1.18.4</lombok.version>
+        <damsel.version>1.455-f268ab3</damsel.version>
+        <shared.resources.version>0.3.8</shared.resources.version>
+        <woody-thrift.version>1.1.22</woody-thrift.version>
+        <geck.common.version>0.6.11</geck.common.version>
         <jaxb.version>2.2.11</jaxb.version>
         <javax.version>1.1.1</javax.version>
         <swagger.version>2.8.0</swagger.version>
         <okhttp.version>3.9.1</okhttp.version>
-        <jackson.version>2.9.4</jackson.version>
         <logstach.version>5.2</logstach.version>
     </properties>
 
@@ -42,11 +39,6 @@
             <groupId>com.rbkmoney.woody</groupId>
             <artifactId>woody-thrift</artifactId>
             <version>${woody-thrift.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.rbkmoney.logback</groupId>
-            <artifactId>nop-rolling</artifactId>
-            <version>${nop-rolling.version}</version>
         </dependency>
         <dependency>
             <groupId>com.rbkmoney.geck</groupId>
@@ -127,7 +119,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
-            <version>${jackson.version}</version>
+            <version>${jackson-bom.version}</version>
         </dependency>
         <dependency>
             <groupId>io.springfox</groupId>
